@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Seva Setu Portal{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-5">
+    <div class="col-lg-8">
+        <h1 class="fw-extrabold display-5 mb-2" style="font-weight: 800; letter-spacing: -1px;">Welcome to Seva Setu</h1>
+        <p class="text-secondary lead mb-0">NGO Resource & Donation Management Portal. Monitor metrics, trace expenditures, manage volunteer directories, and audit inventory allocations across all community service branches.</p>
+    </div>
+    <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+        <a href="{% url 'core:dashboard' %}" class="btn btn-custom-primary me-2">
+            <i class="bi bi-graph-up-arrow me-1"></i> View Analytics
+        </a>
+        <a href="{% url 'core:download_report' %}" target="_blank" class="btn btn-outline-danger fw-bold border-2">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Utilization Report
+        </a>
+    </div>
+</div>
+
+<!-- Metrics Cards Row -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+    <!-- Card 1: Total Donations -->
+    <div class="col">
+        <div class="card card-custom card-gradient-1 p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">TOTAL CONTRIBUTIONS</span>
+                <div class="bg-primary bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-primary" style="width: 42px; height: 42px;">
+                    <i class="bi bi-cash-coin fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">₹{{ stats.total_donations|floatformat:2 }}</h2>
+            <p class="text-muted small mb-0">Aggregate financial support received</p>
+        </div>
+    </div>
+
+    <!-- Card 2: Total Volunteers -->
+    <div class="col">
+        <div class="card card-custom card-gradient-2 p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">ACTIVE VOLUNTEERS</span>
+                <div class="bg-success bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-success" style="width: 42px; height: 42px;">
+                    <i class="bi bi-people-fill fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ stats.total_volunteers }}</h2>
+            <p class="text-muted small mb-0">Committed staff across branches</p>
+        </div>
+    </div>
+
+    <!-- Card 3: Total Beneficiaries Served -->
+    <div class="col">
+        <div class="card card-custom card-gradient-3 p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">BENEFICIARIES SERVED</span>
+                <div class="bg-info bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-info" style="width: 42px; height: 42px;">
+                    <i class="bi bi-emoji-smile-fill fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ stats.total_beneficiaries }}</h2>
+            <p class="text-muted small mb-0">Meals, resources, and services logged</p>
+        </div>
+    </div>
+
+    <!-- Card 4: Inventory Items -->
+    <div class="col">
+        <div class="card card-custom card-gradient-4 p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">TOTAL INVENTORY ITEMS</span>
+                <div class="bg-warning bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-warning" style="width: 42px; height: 42px;">
+                    <i class="bi bi-box-seam-fill fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ stats.total_inventory }}</h2>
+            <p class="text-muted small mb-0">Unique supplies tracked in database</p>
+        </div>
+    </div>
+
+    <!-- Card 5: Total Expenses -->
+    <div class="col">
+        <div class="card card-custom card-gradient-5 p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">TOTAL EXPENSES</span>
+                <div class="bg-danger bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-danger" style="width: 42px; height: 42px;">
+                    <i class="bi bi-wallet2 fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">₹{{ stats.total_expenses|floatformat:2 }}</h2>
+            <p class="text-muted small mb-0">Utilized capital for operations</p>
+        </div>
+    </div>
+
+    <!-- Card 6: Active Branches -->
+    <div class="col">
+        <div class="card card-custom card-gradient-6 p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">ACTIVE BRANCHES</span>
+                <div class="bg-dark bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-dark" style="width: 42px; height: 42px;">
+                    <i class="bi bi-geo-alt-fill fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ stats.total_branches }}</h2>
+            <p class="text-muted small mb-0">Branches operating community service</p>
+        </div>
+    </div>
+
+    <!-- Card 7: Initiative Projects -->
+    <div class="col">
+        <div class="card card-custom p-4 h-100" style="border: none; border-radius: 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">ACTIVE PROJECTS</span>
+                <div class="bg-primary bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-primary" style="width: 42px; height: 42px; background-color: rgba(14, 165, 233, 0.1);">
+                    <i class="bi bi-folder2-open fs-4" style="color: #0ea5e9;"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ stats.total_projects }}</h2>
+            <p class="text-muted small mb-0">Registered campaigns and events</p>
+        </div>
+    </div>
+
+    <!-- Card 8: Volunteer Hours -->
+    <div class="col">
+        <div class="card card-custom p-4 h-100" style="border: none; border-radius: 16px; background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">SERVICE CONTRIBUTED</span>
+                <div class="bg-teal bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-teal" style="width: 42px; height: 42px; background-color: rgba(13, 148, 136, 0.1);">
+                    <i class="bi bi-clock-history fs-4" style="color: #0d9488;"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ stats.total_hours }} <span class="fs-6 fw-normal text-muted">hrs</span></h2>
+            <p class="text-muted small mb-0">Total volunteer service hours logged</p>
+        </div>
+    </div>
+</div>
+
+<!-- Shortcuts Section -->
+<div class="card border-0 shadow-sm rounded-4 mb-5 p-4" style="background-color: white;">
+    <h3 class="fw-bold text-dark mb-4">Quick Navigation Modules</h3>
+    <div class="row g-3">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:branch_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-building fs-3 text-primary"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Manage Branches</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:donor_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-people fs-3 text-success"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Donor Register</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:donation_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-cash-stack fs-3 text-purple" style="color: #8b5cf6;"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Log Donations</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:fundallocation_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-arrow-left-right fs-3 text-primary"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Fund Allocations</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:project_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-folder2-open fs-3 text-sky" style="color: #0ea5e9;"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Projects Registry</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:inventory_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-box-seam fs-3 text-warning"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Inventory Registry</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:inventorytransaction_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-clock-history fs-3 text-indigo" style="color: #6366f1;"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Stock Ledger</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:volunteer_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-person-heart fs-3 text-danger"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Volunteer Directory</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:volunteerassignment_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-person-check fs-3 text-teal" style="color: #0d9488;"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Task Assignments</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:beneficiary_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-people fs-3 text-info"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Beneficiary Registry</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:aiddistribution_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-gift fs-3 text-success"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Aid Distributions</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:expense_list' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-wallet2 fs-3 text-rose" style="color: #f43f5e;"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Track Expenses</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary py-3 w-100 h-100 d-flex flex-column align-items-center gap-2 rounded-3 border-light-subtle bg-light bg-opacity-50">
+                <i class="bi bi-graph-up-arrow fs-3 text-dark"></i>
+                <span class="fw-semibold text-dark text-center" style="font-size: 0.85rem;">Analytics Charts</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Analytics — Seva Setu Portal{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-5">
+    <div class="col-md-8">
+        <h1 class="fw-bold display-6 mb-2" style="font-weight: 800; letter-spacing: -0.5px;">NGO Impact Analytics</h1>
+        <p class="text-secondary mb-0">Real-time financial audits, branch distributions, and donation trends computed via Django ORM.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'core:download_report' %}" target="_blank" class="btn btn-custom-primary">
+            <i class="bi bi-file-pdf me-1"></i> Generate Utilization Report
+        </a>
+    </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="row g-4 mb-4">
+    <!-- Donation per Branch (Bar Chart) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-building text-primary"></i> Branch Contributions
+            </h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="branchDonationsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense Breakdown (Pie Chart) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-pie-chart text-danger"></i> Project Expenditures
+            </h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="expenseProjectChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Trends (Line Chart) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-graph-up text-violet" style="color: #8b5cf6;"></i> Donation Trend (6m)
+            </h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="donationTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="row g-4 mb-5">
+    <!-- Inventory Categories (Doughnut Chart) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-box-seam text-warning"></i> Inventory Categories
+            </h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="inventoryCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volunteer Status (Pie Chart) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-person-heart text-success"></i> Volunteer Status
+            </h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="volunteerStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beneficiary Meals (Bar Chart) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-egg-fried text-info"></i> Beneficiary Meals
+            </h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="beneficiaryMealChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Top Donors Table -->
+    <div class="col-lg-8">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-trophy text-warning"></i> Top 5 Donors by Total Amount
+            </h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="border-0 rounded-start">Donor Name</th>
+                            <th class="border-0">Email</th>
+                            <th class="border-0">Donor Type</th>
+                            <th class="border-0 text-end rounded-end">Total Donated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donor in top_donors %}
+                            <tr>
+                                <td class="fw-semibold text-dark">{{ donor.name }}</td>
+                                <td class="text-secondary">{{ donor.email }}</td>
+                                <td>
+                                    <span class="badge {% if donor.type == 'Individual' %}bg-primary{% else %}bg-success{% endif %} bg-opacity-10 text-{% if donor.type == 'Individual' %}primary{% else %}success{% endif %} px-2.5 py-1.5 rounded-2">
+                                        {{ donor.type }}
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-end text-dark" style="font-family: monospace;">₹{{ donor.total_amount|floatformat:2 }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-secondary">No donor contributions logged yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Branch Operations Sidebar (Volunteers & Beneficiaries) -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-people-fill text-info"></i> Branch Operations
+            </h5>
+            
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active btn-sm" id="pills-vol-tab" data-bs-toggle="pill" data-bs-target="#pills-vol" type="button" role="tab">Volunteers</button>
+                </li>
+                <li class="nav-item ms-2" role="presentation">
+                    <button class="nav-link btn-sm" id="pills-ben-tab" data-bs-toggle="pill" data-bs-target="#pills-ben" type="button" role="tab">Beneficiaries</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="pills-tabContent">
+                <!-- Volunteers Tab -->
+                <div class="tab-pane fade show active" id="pills-vol" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-muted border-0">Branch</th>
+                                    <th class="text-muted border-0 text-end">Volunteers</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vol in branch_volunteers %}
+                                    <tr>
+                                        <td class="fw-semibold text-dark">{{ vol.branch__name }}</td>
+                                        <td class="text-end fw-bold" style="font-family: monospace;">{{ vol.volunteer_count }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center py-3 text-secondary">No volunteers registered.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Beneficiaries Tab -->
+                <div class="tab-pane fade" id="pills-ben" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-muted border-0">Branch</th>
+                                    <th class="text-muted border-0 text-end">Served Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ben in branch_beneficiaries %}
+                                    <tr>
+                                        <td class="fw-semibold text-dark">{{ ben.branch__name }}</td>
+                                        <td class="text-end fw-bold" style="font-family: monospace;">{{ ben.served_count|default:0 }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center py-3 text-secondary">No beneficiaries logged.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Load datasets passed as JSON
+        const branchDonationLabels = {{ branch_donation_labels_json|safe }};
+        const branchDonationValues = {{ branch_donation_values_json|safe }};
+        const projectExpenseLabels = {{ project_expense_labels_json|safe }};
+        const projectExpenseValues = {{ project_expense_values_json|safe }};
+        const trendLabels = {{ trend_labels_json|safe }};
+        const trendValues = {{ trend_values_json|safe }};
+        const volunteerLabels = {{ volunteer_labels_json|safe }};
+        const volunteerValues = {{ volunteer_values_json|safe }};
+        const mealLabels = {{ meal_labels_json|safe }};
+        const mealValues = {{ meal_values_json|safe }};
+        const inventoryLabels = {{ inventory_labels_json|safe }};
+        const inventoryValues = {{ inventory_values_json|safe }};
+
+        // Helper function for empty dataset charts
+        function getChartConfig(labels, data, fallbackLabel = 'No Data') {
+            if (!labels.length) {
+                return {
+                    labels: [fallbackLabel],
+                    data: [0]
+                };
+            }
+            return { labels, data };
+        }
+
+        // 1. Branch Donations Bar Chart
+        const ctxBranch = document.getElementById('branchDonationsChart').getContext('2d');
+        const bData = getChartConfig(branchDonationLabels, branchDonationValues, 'No Branch Donations');
+        new Chart(ctxBranch, {
+            type: 'bar',
+            data: {
+                labels: bData.labels,
+                datasets: [{
+                    label: 'Donation Sum (₹)',
+                    data: bData.data,
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: '#2563eb',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: { color: '#64748b', font: { family: 'Inter' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#64748b', font: { family: 'Inter' } }
+                    }
+                }
+            }
+        });
+
+        // 2. Project Expenditures Pie Chart
+        const ctxExpense = document.getElementById('expenseProjectChart').getContext('2d');
+        const eData = getChartConfig(projectExpenseLabels, projectExpenseValues, 'No Project Expenses Logged');
+        new Chart(ctxExpense, {
+            type: 'pie',
+            data: {
+                labels: eData.labels,
+                datasets: [{
+                    data: eData.data,
+                    backgroundColor: [
+                        '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#475569',
+                            font: { family: 'Inter', size: 10 },
+                            padding: 10,
+                            boxWidth: 10
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Donation Trend Line Chart
+        const ctxTrend = document.getElementById('donationTrendChart').getContext('2d');
+        const tData = getChartConfig(trendLabels, trendValues, 'No Historical Trends');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: tData.labels,
+                datasets: [{
+                    label: 'Monthly Sum (₹)',
+                    data: tData.data,
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.05)',
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#8b5cf6',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: { color: '#64748b', font: { family: 'Inter' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#64748b', font: { family: 'Inter' } }
+                    }
+                }
+            }
+        });
+
+        // 4. Inventory Category Doughnut Chart
+        const ctxInventory = document.getElementById('inventoryCategoryChart').getContext('2d');
+        const iData = getChartConfig(inventoryLabels, inventoryValues, 'No Inventory Registered');
+        new Chart(ctxInventory, {
+            type: 'doughnut',
+            data: {
+                labels: iData.labels,
+                datasets: [{
+                    data: iData.data,
+                    backgroundColor: ['#f59e0b', '#dc2626', '#06b6d4', '#64748b'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#475569',
+                            font: { family: 'Inter', size: 10 },
+                            padding: 10,
+                            boxWidth: 10
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // 5. Volunteer Status Pie Chart
+        const ctxVolStatus = document.getElementById('volunteerStatusChart').getContext('2d');
+        const vData = getChartConfig(volunteerLabels, volunteerValues, 'No Volunteers Registered');
+        new Chart(ctxVolStatus, {
+            type: 'pie',
+            data: {
+                labels: vData.labels,
+                datasets: [{
+                    data: vData.data,
+                    backgroundColor: ['#10b981', '#ef4444'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#475569',
+                            font: { family: 'Inter', size: 10 },
+                            padding: 10,
+                            boxWidth: 10
+                        }
+                    }
+                }
+            }
+        });
+
+        // 6. Beneficiary Meals Bar Chart
+        const ctxMeal = document.getElementById('beneficiaryMealChart').getContext('2d');
+        const mData = getChartConfig(mealLabels, mealValues, 'No Meals Served');
+        new Chart(ctxMeal, {
+            type: 'bar',
+            data: {
+                labels: mData.labels,
+                datasets: [{
+                    label: 'Meals Served',
+                    data: mData.data,
+                    backgroundColor: 'rgba(6, 182, 212, 0.7)',
+                    borderColor: '#0891b2',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: { color: '#64748b', font: { family: 'Inter' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#64748b', font: { family: 'Inter' } }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

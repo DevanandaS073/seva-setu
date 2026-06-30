@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Donor Dashboard — Seva Setu{% endblock %}
+
+{% block content %}
+<!-- Top Header Welcome -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+        <h1 class="fw-bold h2 mb-1">Welcome, {{ donor.name }}</h1>
+        <p class="text-secondary small mb-0">Here is a record of your contributions and personal profile details.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'core:donor_profile_edit' %}" class="btn btn-outline-primary rounded-3">
+            <i class="bi bi-pencil me-1"></i> Edit Profile
+        </a>
+        <a href="{% url 'core:donor_donation_create' %}" class="btn btn-custom-primary rounded-3">
+            <i class="bi bi-heart-fill me-1"></i> Log New Donation
+        </a>
+    </div>
+</div>
+
+<!-- Grid for stats & profile details -->
+<div class="row g-4 mb-4">
+    <!-- Stat 1: Total Cash Donated -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold small uppercase" style="letter-spacing: 0.5px;">TOTAL CASH DONATED</span>
+                <div class="bg-success bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-success" style="width: 40px; height: 40px;">
+                    <i class="bi bi-wallet2 fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-success mb-1" style="font-size: 2.2rem; font-family: monospace;">₹{{ total_cash_donated|floatformat:2 }}</h2>
+            <p class="text-muted small mb-0">Financial aid allocated to relief projects</p>
+        </div>
+    </div>
+
+    <!-- Stat 2: Total Items Donated -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-secondary fw-semibold small uppercase" style="letter-spacing: 0.5px;">IN-KIND CONTRIBUTIONS</span>
+                <div class="bg-primary bg-opacity-10 p-2.5 rounded-3 d-flex align-items-center justify-content-center text-primary" style="width: 40px; height: 40px;">
+                    <i class="bi bi-box-seam fs-4"></i>
+                </div>
+            </div>
+            <h2 class="fw-bold text-primary mb-1" style="font-size: 2.2rem; font-family: monospace;">{{ total_items_donated }}</h2>
+            <p class="text-muted small mb-0">Physical supplies donated to branch inventories</p>
+        </div>
+    </div>
+
+    <!-- Contact details summary -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Profile Contact Card</h5>
+            <div class="small text-secondary">
+                <div class="mb-2"><strong class="text-dark">Email:</strong> {{ donor.email }}</div>
+                <div class="mb-2"><strong class="text-dark">Phone:</strong> {{ donor.phone }}</div>
+                <div class="mb-0"><strong class="text-dark">Address:</strong> {{ donor.address }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Donations History Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-5">
+    <div class="px-4 py-3 border-bottom d-flex align-items-center justify-content-between">
+        <h5 class="fw-bold mb-0 text-dark">Your Donations History</h5>
+        <span class="badge bg-secondary bg-opacity-10 text-dark px-2.5 py-1.5 rounded-2 small">{{ donations|length }} entries</span>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="py-3 px-4 border-0">Donation Type</th>
+                    <th class="py-3 border-0">Details / Amount</th>
+                    <th class="py-3 border-0">Allocation Status</th>
+                    <th class="py-3 border-0">Target Branch / Payment Mode</th>
+                    <th class="py-3 border-0">Logged Date</th>
+                    <th class="py-3 px-4 border-0">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donation in donations %}
+                    <tr>
+                        <td class="py-3 px-4">
+                            {% if donation.donation_type == 'cash' %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1.5 rounded-2">Cash</span>
+                            {% else %}
+                                <span class="badge bg-info bg-opacity-10 text-info px-2.5 py-1.5 rounded-2">Item / In-kind</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 fw-bold text-dark">
+                            {% if donation.donation_type == 'cash' %}
+                                <span style="font-family: monospace;">₹{{ donation.amount|floatformat:2 }}</span>
+                            {% else %}
+                                <span class="fw-semibold">{{ donation.item_quantity }} {{ donation.item_unit }}</span> of <span class="text-secondary small fw-normal text-capitalize">{{ donation.item_name }} ({{ donation.get_item_category_display }})</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-secondary small">
+                            {% if donation.donation_type == 'cash' %}
+                                {% if donation.allocated_amount >= donation.amount %}
+                                    <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-2">Fully Allocated</span>
+                                {% elif donation.allocated_amount > 0 %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-2.5 py-1.5 rounded-2">Partially Allocated</span>
+                                {% else %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger px-2.5 py-1.5 rounded-2">Unallocated</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted italic">N/A (Inventory)</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-secondary">
+                            {% if donation.donation_type == 'cash' %}
+                                <span class="badge bg-secondary bg-opacity-10 text-dark px-2.5 py-1.5 rounded-2 text-capitalize">
+                                    {{ donation.get_payment_mode_display }}
+                                </span>
+                            {% else %}
+                                <span class="small fw-semibold">{{ donation.target_branch.name }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-secondary">{{ donation.date|date:"M d, Y" }}</td>
+                        <td class="py-3 px-4 text-secondary small text-truncate" style="max-width: 250px;">{{ donation.notes|default:"-" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-secondary">
+                            <i class="bi bi-heart fs-1 d-block mb-3 text-muted"></i>
+                            No donations logged yet. Click "Log New Donation" to start!
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

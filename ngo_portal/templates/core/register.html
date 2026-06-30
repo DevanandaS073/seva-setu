@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Register Donor Profile — Seva Setu{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card border-0 shadow rounded-4 p-4 p-sm-5 bg-white">
+            <div class="text-center mb-4">
+                <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-person-plus fs-2"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">Donor Registration</h3>
+                <p class="text-secondary small">Sign up to log in-kind contributions and manage your donor profile</p>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Account Information</h5>
+                <div class="row row-cols-1 row-cols-sm-2 g-3 mb-4">
+                    <div class="col">
+                        <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.username.label }}</label>
+                        {{ form.username }}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col">
+                        <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col">
+                        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.password.label }}</label>
+                        {{ form.password }}
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col">
+                        <label for="{{ form.confirm_password.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.confirm_password.label }}</label>
+                        {{ form.confirm_password }}
+                        {% for error in form.confirm_password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Personal / Profile Details</h5>
+                <div class="mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.name.label }}</label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.phone.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.phone.label }}</label>
+                    {{ form.phone }}
+                    {% for error in form.phone.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.address.id_for_label }}" class="form-label fw-semibold text-dark small">{{ form.address.label }}</label>
+                    {{ form.address }}
+                    {% for error in form.address.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger rounded-3 py-2 px-3 small mb-3">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <button type="submit" class="btn btn-custom-primary w-100 py-2.5 fw-semibold mt-3 rounded-3">
+                    Register Profile
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-2 border-top">
+                <span class="text-secondary small">Already have a donor profile?</span>
+                <a href="{% url 'core:login' %}" class="d-block small fw-bold text-primary text-decoration-none mt-1">Sign In here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

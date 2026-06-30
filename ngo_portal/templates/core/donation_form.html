@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit Donation{% else %}Log Donation{% endif %} — Seva Setu{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+            <h2 class="fw-bold text-dark mb-2">{% if object %}Edit Donation Log{% else %}Log Donation Contribution{% endif %}</h2>
+            <p class="text-secondary small mb-4">Input received amounts, trace payment type, and branch assignments.</p>
+            
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="mb-3" id="div_{{ field.id_for_label }}">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-dark small">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text text-muted small">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                
+                <div class="d-flex align-items-center gap-2 mt-4">
+                    <button type="submit" class="btn btn-custom-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i> Log Transaction
+                    </button>
+                    <a href="{% url 'core:donation_list' %}" class="btn btn-custom-secondary px-4">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const donationTypeSelect = document.getElementById('id_donation_type');
+    if (!donationTypeSelect) return;
+
+    const cashFields = ['id_amount', 'id_payment_mode'];
+    const itemFields = ['id_item_category', 'id_item_name', 'id_item_quantity', 'id_item_unit', 'id_target_branch'];
+
+    function toggleFields() {
+        const type = donationTypeSelect.value;
+        if (type === 'cash') {
+            cashFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.closest('.mb-3').style.display = 'block';
+            });
+            itemFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.closest('.mb-3').style.display = 'none';
+            });
+        } else {
+            cashFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.closest('.mb-3').style.display = 'none';
+            });
+            itemFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.closest('.mb-3').style.display = 'block';
+            });
+        }
+    }
+
+    donationTypeSelect.addEventListener('change', toggleFields);
+    toggleFields(); // Initial execution
+});
+</script>
+{% endblock %}

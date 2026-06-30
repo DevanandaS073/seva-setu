@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Seva Setu — NGO Resource & Donation Management Portal{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism Navbar */
+        .navbar-custom {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.85rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand-custom {
+            font-weight: 800;
+            font-size: 1.45rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link-custom {
+            color: #cbd5e1 !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link-custom:hover, .nav-link-custom.active {
+            color: #fff !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu-custom {
+            background-color: var(--dark);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item-custom {
+            color: #cbd5e1 !important;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item-custom:hover {
+            background-color: var(--primary) !important;
+            color: white !important;
+        }
+
+        /* Breadcrumbs or subnav styles */
+        .main-container {
+            flex: 1;
+            padding: 2.5rem 1.5rem;
+        }
+
+        /* Modern Stat Cards */
+        .card-custom {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-gradient-1 { border-top: 4px solid #3b82f6; }
+        .card-gradient-2 { border-top: 4px solid #10b981; }
+        .card-gradient-3 { border-top: 4px solid #8b5cf6; }
+        .card-gradient-4 { border-top: 4px solid #f59e0b; }
+        .card-gradient-5 { border-top: 4px solid #ec4899; }
+        .card-gradient-6 { border-top: 4px solid #06b6d4; }
+
+        /* Custom buttons styling */
+        .btn-custom-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 12px -3px rgba(79, 70, 229, 0.3);
+            color: white;
+        }
+
+        .btn-custom-secondary {
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-secondary:hover {
+            background-color: var(--light);
+            border-color: #cbd5e1;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: #94a3b8;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem 0;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Premium Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand navbar-brand-custom" href="{% url 'core:home' %}">
+                <i class="bi bi-heart-pulse-fill"></i> Seva Setu
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom {% if request.resolver_match.view_name == 'core:home' %}active{% endif %}" href="{% url 'core:home' %}">
+                            <i class="bi bi-house-door-fill me-1"></i> Home
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom {% if request.resolver_match.view_name == 'core:dashboard' %}active{% endif %}" href="{% url 'core:dashboard' %}">
+                                    <i class="bi bi-bar-chart-line-fill me-1"></i> Dashboard
+                                </a>
+                            </li>
+                            <!-- Dropdown for CRUD modules -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link nav-link-custom dropdown-toggle" href="#" id="crudDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-grid-fill me-1"></i> Management Modules
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-custom" aria-labelledby="crudDropdown">
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:branch_list' %}"><i class="bi bi-building me-2"></i> Branches</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:donor_list' %}"><i class="bi bi-people me-2"></i> Donors</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:donation_list' %}"><i class="bi bi-cash-stack me-2"></i> Donations</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:fundallocation_list' %}"><i class="bi bi-arrow-left-right me-2"></i> Fund Allocations</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:project_list' %}"><i class="bi bi-folder2-open me-2"></i> Projects Registry</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:inventory_list' %}"><i class="bi bi-box-seam me-2"></i> Inventory Registry</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:inventorytransaction_list' %}"><i class="bi bi-clock-history me-2"></i> Stock Ledger</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:volunteer_list' %}"><i class="bi bi-person-heart me-2"></i> Volunteer Directory</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:volunteerassignment_list' %}"><i class="bi bi-person-check me-2"></i> Task Assignments</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:beneficiary_list' %}"><i class="bi bi-people me-2"></i> Beneficiary Registry</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:aiddistribution_list' %}"><i class="bi bi-gift me-2"></i> Aid Distributions</a></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" href="{% url 'core:expense_list' %}"><i class="bi bi-wallet2 me-2"></i> Expenses Tracker</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom {% if request.resolver_match.view_name == 'core:donor_dashboard' %}active{% endif %}" href="{% url 'core:donor_dashboard' %}">
+                                    <i class="bi bi-heart-pulse-fill me-1"></i> Donor Portal
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom {% if request.resolver_match.view_name == 'core:donor_donation_create' %}active{% endif %}" href="{% url 'core:donor_donation_create' %}">
+                                    <i class="bi bi-gift-fill me-1"></i> Register Donation
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <a class="btn btn-outline-light nav-link-custom text-white border-0" href="{% url 'core:download_report' %}" target="_blank">
+                                <i class="bi bi-file-earmark-pdf-fill me-1 text-danger"></i> Download Report
+                            </a>
+                        {% endif %}
+                        <form method="post" action="{% url 'core:logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-light nav-link-custom text-white border-0 bg-transparent">
+                                <i class="bi bi-box-arrow-right me-1"></i> Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-outline-light nav-link-custom text-white border-0" href="{% url 'core:login' %}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                        </a>
+                        <a class="btn btn-custom-primary text-white border-0 px-3 py-1.5 rounded-3 fw-semibold text-decoration-none" href="{% url 'core:register' %}">
+                            <i class="bi bi-person-plus-fill me-1"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container main-container">
+        <!-- Toast Notification Panel -->
+        {% if messages %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm rounded-3 border-0 border-start border-4 border-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}primary{% endif %} mb-2" role="alert" style="background-color: white;">
+                            <div class="d-flex align-items-center gap-2">
+                                {% if message.tags == 'success' %}
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                                    <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                                {% else %}
+                                    <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                                {% endif %}
+                                <div class="text-dark">
+                                    {{ message }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-1">&copy; 2026 Seva Setu — NGO Resource & Donation Management Portal. All rights reserved.</p>
+            <p class="mb-0 text-muted" style="font-size: 0.75rem;">Developed with Django 4.2 & Bootstrap 5</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

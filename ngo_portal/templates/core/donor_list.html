@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Donors Registry — Seva Setu{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="fw-bold h2 mb-1">Donor Registry</h1>
+        <p class="text-secondary small mb-0">Track and manage individual and corporate donor profiles.</p>
+    </div>
+    <a href="{% url 'core:donor_create' %}" class="btn btn-custom-primary">
+        <i class="bi bi-person-plus me-1"></i> Register Donor
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="py-3 px-4 border-0">Donor Name</th>
+                    <th class="py-3 border-0">Email</th>
+                    <th class="py-3 border-0">Phone</th>
+                    <th class="py-3 border-0">Type</th>
+                    <th class="py-3 px-4 border-0 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donor in donors %}
+                    <tr>
+                        <td class="py-3 px-4 fw-semibold text-dark">{{ donor.name }}</td>
+                        <td class="py-3 text-secondary">{{ donor.email }}</td>
+                        <td class="py-3 text-secondary" style="font-family: monospace;">{{ donor.phone }}</td>
+                        <td class="py-3">
+                            <span class="badge {% if donor.donor_type == 'individual' %}bg-primary{% else %}bg-success{% endif %} bg-opacity-10 text-{% if donor.donor_type == 'individual' %}primary{% else %}success{% endif %} px-2.5 py-1.5 rounded-2 text-capitalize">
+                                {{ donor.get_donor_type_display }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-end">
+                            <a href="{% url 'core:donor_update' donor.pk %}" class="btn btn-sm btn-outline-primary rounded-2 me-1">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a href="{% url 'core:donor_delete' donor.pk %}" class="btn btn-sm btn-outline-danger rounded-2">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-secondary">
+                            <i class="bi bi-people fs-1 d-block mb-3 text-muted"></i>
+                            No donors registered yet. Click "Register Donor" to add one.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
